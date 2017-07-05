@@ -24,7 +24,7 @@ This app will consist of a single screen with game board, game controls, and nav
 and the About modal.  Game controls will include left and right and "a" and "d" keys for direction movement for laser base and "spacebar" for firing. Center screen will feature a play game and high score buttons.
 
 ![Board State](docs/board_state.png)
-![Home Screen](docs/home_Screen.png)
+![Home Screen](docs/home_screen.png)
 
 ### Architecture and Technologies
 
