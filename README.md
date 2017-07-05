@@ -23,7 +23,8 @@ In addition, this project will include:
 This app will consist of a single screen with game board, game controls, and nav links to the Github, my LinkedIn,
 and the About modal.  Game controls will include left and right and "a" and "d" keys for direction movement for laser base and "spacebar" for firing. Center screen will feature a play game and high score buttons.
 
-![wireframes](https://github.com/appacademy/ny-portfolio-curriculum/blob/master/javascript-project/js-proposal-wireframe.jpg)
+![Board State](docs/board_state.png)
+![Home Screen](docs/home_Screen.png)
 
 ### Architecture and Technologies
 
