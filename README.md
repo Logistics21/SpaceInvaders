@@ -1,5 +1,9 @@
 ## Space Invaders
 
+### Live (Working) Demo
+
+[Space Invaders](https://logistics21.github.io/SpaceInvaders)
+
 ### Background
 
 You are Earths' last hope. Created by Tomohiro Nishikado and released in 1978. Space Invaders was originally manufactured and sold by Taito in Japan. The object of the game is to shoot the invaders with your laser base while avoiding their shots and preventing an invasion. Each game screen starts with 5 rows of 11 invaders. The bottom 2 rows score 10 points per large invader, the middle 2 rows 20 points for each medium invader, and the top row scores 30 points for each small invader. This makes for a total of 990 points. The score for each screen can be increased by destroying the 'mystery' spaceships that fly from one side of the screen to the other. Temporary sanctuary can be sought beneath the 4 base shelters.
