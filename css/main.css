@@ -1,0 +1,64 @@
+@font-face {
+  font-family: Invader;
+  src: url("../fonts/ca.ttf");
+}
+
+body {
+  background-image: url("../sprites/si.jpg");
+  background-size: 33.4%;
+  background-repeat: repeat;
+  font-size: 28px;
+  font-family: Invader;
+  color: white;
+}
+
+.body-container {
+  padding-top: 5em;
+  color: white;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.header-container {
+  background-color: black;
+  letter-spacing: 1.25px;
+  text-align: center;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 800px;
+  background: black;
+}
+
+.hidden {
+  display: none;
+}
+
+.links {
+  background-color: black;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+h1, h3, a {
+  color: white;
+  padding: 0.5em;
+}
+
+canvas {
+  background-color: #000;
+  display: flex;
+  margin: auto;
+}
+
+.modal-container {
+  position: absolute;
+  top: 250px;
+  width: 600px;
+}

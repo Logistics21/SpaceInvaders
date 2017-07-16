@@ -2,7 +2,7 @@
   "name": "SpaceInvaders",
   "version": "1.0.0",
   "description": "### Background",
-  "main": "entry.js",
+  "main": "index.js",
   "directories": {
     "doc": "docs"
   },
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/Logistics21/SpaceInvaders/issues"
   },
-  "homepage": "https://github.com/Logistics21/SpaceInvaders#readme"
+  "homepage": "https://github.com/Logistics21/SpaceInvaders#readme",
+  "dependencies": {
+    "firebase": "^4.1.3"
+  }
 }

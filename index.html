@@ -2,12 +2,77 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Space Invaders</title>
-    <link rel="stylesheet" href="reset.css"/>
-    <link rel="stylesheet" href="main.css"/>
-    <script type="text/javascript" src="js/game.js"></script>
+    <title>
+      Space Invaders | A Game by David Halsey
+    </title>
+    <link rel='shortcut icon' type='image/x-icon' href='sprites/si-favicon.png'/>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
   </head>
+
   <body>
-    <canvas id="canvas" width="800" height="600"></canvas>
+    <div class="body-container">
+      <div class="game-container">
+        <div class="modal modal-container">
+          <div class="modal modal-start-container">
+            <p>Earth is under attack by invaders...</p>
+            <br /><br />
+            <p>from space!</p>
+            <br /><br />
+            <p>Only you can stop them!</p>
+            <br />
+            <p>Use "a"/"d" or left/right to move. Spacebar fires your laser.</p>
+            <br />
+            <br />
+            <p>Click anywhere to begin the battle!</p>
+          </div>
+        </div>
+        <div class="hidden gameover modal-container">
+          <div class="hidden gameover modal-gameover-container">
+            <p>Earth is DOOMED!!!</p>
+            <br /><br />
+            <p>Enter your Name</p>
+          </div>
+        </div>
+        <div class="hidden victory modal-container">
+          <div class="hidden victory modal-gameover-container">
+            <p>Earth is saved!!!</p>
+            <br />
+            <p>Never again will we have to fear invaders ...</p>
+            <br /><br />
+            <p>from space!</p>
+            <br /><br />
+            <p>Enter your Name</p>
+          </div>
+        </div>
+        <div class="header-container">
+          <h1>Space Invaders</h1>
+        </div>
+        <canvas id="canvas" width="800" height="600">
+          <p>Sorry, your browser does not support HTML5</p>
+        </canvas>
+        <div class="links">
+          <a target="_blank" href="http://davidhalsey.tech/"><i class="fa fa-globe fa-3x" aria-hidden="true"></i>David 2.0</a>
+          <a target="_blank" href="https://github.com/Logistics21/SpaceInvaders"><i class="fa fa-github fa-3x" aria-hidden="true"></i>GitHub</a>
+          <a target="_blank" href="https://www.linkedin.com/in/david-halsey-72487559/"><i class="fa fa-linkedin-square fa-3x" aria-hidden="true"></i>LinkedIn</a>
+          <h3 id="mute">Mute</h3>
+          <!-- <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-app.js"></script> -->
+          <!-- <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-database.js"></script> -->
+          <!-- <script>
+            // Initialize Firebase
+            var config = {
+              apiKey: "AIzaSyAcDMh-Q_J-6QwCmxsYm7gbmk7ZFxixUNI",
+              authDomain: "space-invaders-56898.firebaseapp.com",
+              databaseURL: "https://space-invaders-56898.firebaseio.com",
+              projectId: "space-invaders-56898",
+              storageBucket: "space-invaders-56898.appspot.com",
+              messagingSenderId: "637696355165"
+            };
+            firebase.initializeApp(config);
+          </script> -->
+        </div>
+      </div>
+    </div>
+    <script src='game.js'></script>
   </body>
 </html>
