@@ -323,7 +323,7 @@ class MakeSprite {
     let invaderArr = [];
     let rows = [2, 1, 1, 0, 0];
   	for (let i = 0, len = rows.length; i < len; i++) {
-  		for (let j = 0; j < 1; j++) {
+  		for (let j = 0; j < 10; j++) {
   			let a = rows[i];
   			invaderArr.push({
   				sprite: this.invSprites[a],
