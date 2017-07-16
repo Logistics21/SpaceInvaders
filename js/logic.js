@@ -1,4 +1,3 @@
-// add framNum to determine which sprite is rendered
 export const drawSprite = (ctx, { sprite, x, y }, sp) => {
   ctx.drawImage(sprite[sp].img,
     sprite[sp].x, sprite[sp].y, sprite[sp].w, sprite[sp].h,

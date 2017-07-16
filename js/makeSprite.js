@@ -24,9 +24,8 @@ class MakeSprite {
   }
 
   makeInvaders(lvl=1) {
-    // pass make invaders a variable to increment x value
     let invaderArr = [];
-    let rows = [2];
+    let rows = [2, 1, 1, 0, 0];
   	for (let i = 0, len = rows.length; i < len; i++) {
   		for (let j = 0; j < 1; j++) {
   			let a = rows[i];

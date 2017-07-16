@@ -1,6 +1,5 @@
 class Laser {
   constructor(shooter) {
-    // debugger
     this.x = shooter.x + (shooter.sprite[0].w*1.5);
     this.y = shooter.y;
     this.color = "#fff";

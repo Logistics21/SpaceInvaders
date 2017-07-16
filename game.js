@@ -320,9 +320,8 @@ class MakeSprite {
   }
 
   makeInvaders(lvl=1) {
-    // pass make invaders a variable to increment x value
     let invaderArr = [];
-    let rows = [2];
+    let rows = [2, 1, 1, 0, 0];
   	for (let i = 0, len = rows.length; i < len; i++) {
   		for (let j = 0; j < 1; j++) {
   			let a = rows[i];
@@ -546,7 +545,6 @@ document.addEventListener('DOMContentLoaded', (e) => {
 "use strict";
 class Laser {
   constructor(shooter) {
-    // debugger
     this.x = shooter.x + (shooter.sprite[0].w*1.5);
     this.y = shooter.y;
     this.color = "#fff";
@@ -584,7 +582,6 @@ class Laser {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-// add framNum to determine which sprite is rendered
 const drawSprite = (ctx, { sprite, x, y }, sp) => {
   ctx.drawImage(sprite[sp].img,
     sprite[sp].x, sprite[sp].y, sprite[sp].w, sprite[sp].h,
