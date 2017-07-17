@@ -28,14 +28,13 @@ class Display {
 
   update() {
     this.frames++;
-
+    debugger
     document.addEventListener("keydown", (e) => {
       this.input.down[e.keyCode] = true;
     });
 
     document.addEventListener("keyup", (e) => {
       delete this.input.down[e.keyCode];
-      delete this.input.pressed[e.keyCode];
     });
 
     if (this.laserBase.alive) {
