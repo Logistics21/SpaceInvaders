@@ -16,8 +16,23 @@ body {
   padding-top: 5em;
   color: white;
   display: flex;
-  align-items: center;
-  flex-direction: column;
+  margin: 0 auto;
+  flex-direction: row-reverse;
+  justify-content: center;
+}
+
+.scoreboard-container {
+  background: black;
+  height: 400px;
+  margin-left: 50px;
+}
+
+.score-container {
+  padding: 0.5em;
+}
+
+.score-title {
+  margin-bottom: 10px;
 }
 
 .header-container {
@@ -61,4 +76,15 @@ canvas {
   position: absolute;
   top: 250px;
   width: 600px;
+}
+
+.button {
+  cursor: pointer;
+  background-color: black;
+  color: white;
+  border: 1px solid white;
+  border-radius: 3px;
+  font-family: Invader;
+  padding: 1em;
+  font-size: 20px;
 }

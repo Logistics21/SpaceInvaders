@@ -97,14 +97,17 @@ class Display {
     this.dir = 1;
     this.difficulty = 0.015;
     this.sound = sound;
-    this.sound.fX.ufo1.volume = 0.25;
+    this.sound.fX.ufo3.volume = 0.20;
     this.sound.fX.ufo2.volume = 0.25;
-    this.sound.fX.kill.volume = 0.25;
-    this.sound.fX.shoot.volume = 0.25;
+    this.sound.fX.kill.volume = 0.1;
+    this.sound.fX.shoot.volume = 0.15;
+    this.sound.fX.fast1.volume = 0.50;
+    this.sound.fX.fast2.volume = 0.50;
+    this.sound.fX.fast3.volume = 0.50;
+    this.sound.fX.fast4.volume = 0.50;
     this.score = 0;
     this.lvl = lvl;
     this.drawPoints = false;
-    debugger
   }
 
   update() {
@@ -136,7 +139,7 @@ class Display {
         }
       }
 
-      if (this.frames % 600 === 0) {
+      if (this.frames % 720 === 0) {
         if (!this.mysteryShip.active) {
         this.deployMystery();
         }
@@ -219,6 +222,8 @@ class Display {
     }
 
     if (this.drawPoints) {
+      this.sound.fX.ufo3.pause();
+      this.sound.fX.ufo3.currentTime = 0;
       this.ctx.font = "20px Invader";
       this.ctx.fillStyle = "white";
       this.ctx.fillText(
@@ -264,10 +269,10 @@ class Display {
     let loop = () => {
   		this.update();
   		this.render();
-      if (this.lvl > 5) {
+      if (this.laserBase.lives === 0) {
+        this.gameover();
+      } else if (this.lvl > 5) {
         this.victory();
-      } else if (this.laserBase.lives === 0) {
-        this.gameover(loop);
       } else {
         this.frameID = window.requestAnimationFrame(loop);
       }
@@ -283,21 +288,25 @@ class Display {
     }
   }
 
-  gameover(loop) {
-    this.frameID = window.requestAnimationFrame(loop);
-    setTimeout(() => {
-      window.cancelAnimationFrame(this.frameID);
-      this.ctx.clearRect(0, 0, this.width, this.height);
-      const go = document.getElementsByClassName('gameover');
-      Array.prototype.forEach.call(go, el => el.classList.remove('hidden'));
-    }, 1000);
+  collisionAlien(a, b) {
+    if (a.x < (b.x+b.w*3) && b.x < (a.w*3+a.x) &&
+        a.y < (b.y+b.h*3) && b.y < (a.h*3+a.y)) {
+      return true;
+    }
+  }
+
+  gameover() {
+    window.cancelAnimationFrame(this.frameID);
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    const vic = Array.from(document.getElementsByClassName('gameover'));
+    vic.forEach(el => el.classList.remove('hidden'));
   }
 
   victory() {
     window.cancelAnimationFrame(this.frameID);
     this.ctx.clearRect(0, 0, this.width, this.height);
-    const vic = document.getElementsByClassName('victory');
-    Array.prototype.forEach.call(vic, el => el.classList.remove('hidden'));
+    const vic = Array.from(document.getElementsByClassName('victory'));
+    vic.forEach(el => el.classList.remove('hidden'));
   }
 
   playerDie() {
@@ -323,14 +332,20 @@ class Display {
 
   deployMystery() {
     this.mysteryShip.active = true;
-    this.mysteryShip.dir *= -1;
+    if (Math.random() < 0.5) {
+      this.mysteryShip.dir = -1;
+      this.mysteryShip.x = -this.mysteryShip.w;
+    } else {
+      this.mysteryShip.dir = 1;
+      this.mysteryShip.x = this.width+this.mysteryShip.w;
+    }
   }
 
   mysteryLeft() {
     if (this.mysteryShip.active && this.mysteryShip.dir === 1) {
       if ((this.mysteryShip.x + this.mysteryShip.w*3) > 0) {
         this.mysteryShip.x -= 1.75;
-        this.sound.fX.ufo1.play();
+        this.sound.fX.ufo3.play();
       } else {
         this.mysteryShip.active = false;
       }
@@ -340,9 +355,8 @@ class Display {
   mysteryRight() {
     if (this.mysteryShip.active && this.mysteryShip.dir === -1) {
       if ((this.mysteryShip.x - this.mysteryShip.w*3) < this.width) {
-        this.mysteryShip.x += 1.5;
-        // this.sound.fX.ufo1.play();
-        // if (this.frames % 120 === 0) this.sound.fX.ufo2.play();
+        this.mysteryShip.x += 1.75;
+        this.sound.fX.ufo3.play();
       } else {
         this.mysteryShip.active = false;
       }
@@ -387,9 +401,9 @@ class MakeSprite {
 
   makeInvaders(lvl=1) {
     let invaderArr = [];
-    let rows = [0];
+    let rows = [2, 1, 1, 0, 0];
   	for (let i = 0, len = rows.length; i < len; i++) {
-  		for (let j = 0; j < 1; j++) {
+  		for (let j = 0; j < 10; j++) {
   			let a = rows[i];
   			invaderArr.push({
   				sprite: this.invSprites[a],
@@ -537,7 +551,8 @@ class SoundFx {
       shoot: new Audio("sounds/shoot.wav"),
       kill: new Audio("sounds/killinv.wav"),
       ufo1: new Audio("sounds/ufo_low.wav"),
-      ufo2: new Audio("sounds/ufo_high.wav")
+      ufo2: new Audio("sounds/ufo_high.wav"),
+      ufo3: new Audio("sounds/ufo3.wav")
     }
 
     this.muted = false;
@@ -577,11 +592,36 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-function play() {
-  const modal = document.getElementsByClassName('modal');
-  Array.prototype.forEach.call(modal, el => el.classList.add('hidden'));
+document.addEventListener('DOMContentLoaded', (e) => {
+  // var config = {
+  //   apiKey: "AIzaSyAcDMh-Q_J-6QwCmxsYm7gbmk7ZFxixUNI",
+  //   authDomain: "space-invaders-56898.firebaseapp.com",
+  //   databaseURL: "https://space-invaders-56898.firebaseio.com",
+  //   projectId: "space-invaders-56898",
+  //   storageBucket: "space-invaders-56898.appspot.com",
+  //   messagingSenderId: "637696355165"
+  // };
+  //
+  // firebase.initializeApp(config);
+  const button = Array.from(document.getElementsByClassName("button"));
 
-  // const game = new Game();
+  button.forEach(el => {
+    el.addEventListener("click", (e) => {
+      const go = Array.from(document.getElementsByClassName('gameover'));
+      go.forEach(el => el.classList.add('hidden'));
+      const vic = Array.from(document.getElementsByClassName('victory'));
+      vic.forEach(el => el.classList.add('hidden'));
+      play();
+    });
+  });
+
+  document.addEventListener('click', play)
+});
+
+function play() {
+  const modal = Array.from(document.getElementsByClassName('modal'));
+  modal.forEach(el => { el.classList.add('hidden') });
+
   const sound = new __WEBPACK_IMPORTED_MODULE_2__soundFx__["a" /* default */]();
 
   document.getElementById("mute").addEventListener("click", function(e) {
@@ -602,13 +642,10 @@ function main(sound) {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext('2d');
   let lvl = 1;
+  // let scores = firebase.database().ref("scores");
   const display = new __WEBPACK_IMPORTED_MODULE_0__display_js__["a" /* default */](canvas, ctx, sound, lvl);
   display.run();
 }
-
-document.addEventListener('DOMContentLoaded', (e) => {
-  document.addEventListener('click', play)
-});
 
 
 /***/ }),
@@ -690,6 +727,16 @@ const updateLasers = (height, arr) => {
 
 const updateInvaders = (obj, width, lvFrame, spFrame, arr, dir, sound, player) => {
   let left = 0, right = width, len = arr.length;
+
+  for (var i = len-1; i >= 0; i--) {
+    let a = arr[i];
+    if (obj.collisionAlien(a, player)) {
+      sound.fX.die.play();
+      player.alive = false;
+      player.lives = 0;
+    }
+  }
+
   for (let i = 0; i < len; i++) {
     let a = arr[i];
     a.x += 30 * dir;
@@ -703,17 +750,6 @@ const updateInvaders = (obj, width, lvFrame, spFrame, arr, dir, sound, player) =
       let a = arr[i]
       a.x += 30 * dir;
       a.y += 30;
-    }
-  }
-
-  if (len > 0 && (arr[len-1].y + arr[len-1].h*3 >= player.y)) {
-    for (let i = 0; i < len; i++) {
-      let a = arr[i];
-      if (obj.collision(a, player)) {
-        sound.fX.die.play();
-        player.alive = false;
-        player.lives = 0;
-      }
     }
   }
 

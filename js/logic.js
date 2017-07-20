@@ -27,6 +27,16 @@ export const updateLasers = (height, arr) => {
 
 export const updateInvaders = (obj, width, lvFrame, spFrame, arr, dir, sound, player) => {
   let left = 0, right = width, len = arr.length;
+
+  for (var i = len-1; i >= 0; i--) {
+    let a = arr[i];
+    if (obj.collisionAlien(a, player)) {
+      sound.fX.die.play();
+      player.alive = false;
+      player.lives = 0;
+    }
+  }
+
   for (let i = 0; i < len; i++) {
     let a = arr[i];
     a.x += 30 * dir;
@@ -40,17 +50,6 @@ export const updateInvaders = (obj, width, lvFrame, spFrame, arr, dir, sound, pl
       let a = arr[i]
       a.x += 30 * dir;
       a.y += 30;
-    }
-  }
-
-  if (len > 0 && (arr[len-1].y + arr[len-1].h*3 >= player.y)) {
-    for (let i = 0; i < len; i++) {
-      let a = arr[i];
-      if (obj.collision(a, player)) {
-        sound.fX.die.play();
-        player.alive = false;
-        player.lives = 0;
-      }
     }
   }
 

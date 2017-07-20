@@ -9,7 +9,8 @@ class SoundFx {
       shoot: new Audio("sounds/shoot.wav"),
       kill: new Audio("sounds/killinv.wav"),
       ufo1: new Audio("sounds/ufo_low.wav"),
-      ufo2: new Audio("sounds/ufo_high.wav")
+      ufo2: new Audio("sounds/ufo_high.wav"),
+      ufo3: new Audio("sounds/ufo3.wav")
     }
 
     this.muted = false;

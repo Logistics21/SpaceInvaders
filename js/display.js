@@ -23,14 +23,17 @@ class Display {
     this.dir = 1;
     this.difficulty = 0.015;
     this.sound = sound;
-    this.sound.fX.ufo1.volume = 0.25;
+    this.sound.fX.ufo3.volume = 0.20;
     this.sound.fX.ufo2.volume = 0.25;
-    this.sound.fX.kill.volume = 0.25;
-    this.sound.fX.shoot.volume = 0.25;
+    this.sound.fX.kill.volume = 0.1;
+    this.sound.fX.shoot.volume = 0.15;
+    this.sound.fX.fast1.volume = 0.50;
+    this.sound.fX.fast2.volume = 0.50;
+    this.sound.fX.fast3.volume = 0.50;
+    this.sound.fX.fast4.volume = 0.50;
     this.score = 0;
     this.lvl = lvl;
     this.drawPoints = false;
-    debugger
   }
 
   update() {
@@ -62,7 +65,7 @@ class Display {
         }
       }
 
-      if (this.frames % 600 === 0) {
+      if (this.frames % 720 === 0) {
         if (!this.mysteryShip.active) {
         this.deployMystery();
         }
@@ -146,6 +149,8 @@ class Display {
     }
 
     if (this.drawPoints) {
+      this.sound.fX.ufo3.pause();
+      this.sound.fX.ufo3.currentTime = 0;
       this.ctx.font = "20px Invader";
       this.ctx.fillStyle = "white";
       this.ctx.fillText(
@@ -191,10 +196,10 @@ class Display {
     let loop = () => {
   		this.update();
   		this.render();
-      if (this.lvl > 5) {
+      if (this.laserBase.lives === 0) {
+        this.gameover();
+      } else if (this.lvl > 5) {
         this.victory();
-      } else if (this.laserBase.lives === 0) {
-        this.gameover(loop);
       } else {
         this.frameID = window.requestAnimationFrame(loop);
       }
@@ -210,21 +215,25 @@ class Display {
     }
   }
 
-  gameover(loop) {
-    this.frameID = window.requestAnimationFrame(loop);
-    setTimeout(() => {
-      window.cancelAnimationFrame(this.frameID);
-      this.ctx.clearRect(0, 0, this.width, this.height);
-      const go = document.getElementsByClassName('gameover');
-      Array.prototype.forEach.call(go, el => el.classList.remove('hidden'));
-    }, 1000);
+  collisionAlien(a, b) {
+    if (a.x < (b.x+b.w*3) && b.x < (a.w*3+a.x) &&
+        a.y < (b.y+b.h*3) && b.y < (a.h*3+a.y)) {
+      return true;
+    }
+  }
+
+  gameover() {
+    window.cancelAnimationFrame(this.frameID);
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    const vic = Array.from(document.getElementsByClassName('gameover'));
+    vic.forEach(el => el.classList.remove('hidden'));
   }
 
   victory() {
     window.cancelAnimationFrame(this.frameID);
     this.ctx.clearRect(0, 0, this.width, this.height);
-    const vic = document.getElementsByClassName('victory');
-    Array.prototype.forEach.call(vic, el => el.classList.remove('hidden'));
+    const vic = Array.from(document.getElementsByClassName('victory'));
+    vic.forEach(el => el.classList.remove('hidden'));
   }
 
   playerDie() {
@@ -250,14 +259,20 @@ class Display {
 
   deployMystery() {
     this.mysteryShip.active = true;
-    this.mysteryShip.dir *= -1;
+    if (Math.random() < 0.5) {
+      this.mysteryShip.dir = -1;
+      this.mysteryShip.x = -this.mysteryShip.w;
+    } else {
+      this.mysteryShip.dir = 1;
+      this.mysteryShip.x = this.width+this.mysteryShip.w;
+    }
   }
 
   mysteryLeft() {
     if (this.mysteryShip.active && this.mysteryShip.dir === 1) {
       if ((this.mysteryShip.x + this.mysteryShip.w*3) > 0) {
         this.mysteryShip.x -= 1.75;
-        this.sound.fX.ufo1.play();
+        this.sound.fX.ufo3.play();
       } else {
         this.mysteryShip.active = false;
       }
@@ -267,9 +282,8 @@ class Display {
   mysteryRight() {
     if (this.mysteryShip.active && this.mysteryShip.dir === -1) {
       if ((this.mysteryShip.x - this.mysteryShip.w*3) < this.width) {
-        this.mysteryShip.x += 1.5;
-        // this.sound.fX.ufo1.play();
-        // if (this.frames % 120 === 0) this.sound.fX.ufo2.play();
+        this.mysteryShip.x += 1.75;
+        this.sound.fX.ufo3.play();
       } else {
         this.mysteryShip.active = false;
       }
