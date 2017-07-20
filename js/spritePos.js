@@ -57,5 +57,11 @@ export const spSh = [
     y: 15,
     width: 18,
     height: 11
+  },
+  {
+    x: 0,
+    y: 0,
+    width: 16,
+    height: 7
   }
 ];

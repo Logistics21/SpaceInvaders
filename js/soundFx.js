@@ -7,10 +7,12 @@ class SoundFx {
       fast4: new Audio("sounds/fast4.wav"),
       die: new Audio("sounds/die.wav"),
       shoot: new Audio("sounds/shoot.wav"),
-      kill: new Audio("sounds/killinv.wav")
+      kill: new Audio("sounds/killinv.wav"),
+      ufo1: new Audio("sounds/ufo_low.wav"),
+      ufo2: new Audio("sounds/ufo_high.wav")
     }
 
-    this.muted = true;
+    this.muted = false;
   }
 
   mute() {
@@ -29,6 +31,5 @@ class SoundFx {
     this.muted = false;
   }
 }
-
 
 export default SoundFx;

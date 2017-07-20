@@ -87,6 +87,7 @@ class Display {
     this.height = this.canvas.height;
     this.makeSprite = new __WEBPACK_IMPORTED_MODULE_2__makeSprite_js__["a" /* default */](this.canvas);
     this.invaderArr = this.makeSprite.makeInvaders(lvl);
+    this.mysteryShip = this.makeSprite.makeMysteryShip();
     this.laserArr = [];
     this.laserBase = this.makeSprite.makelaserBase();
     this.frames = 0;
@@ -96,13 +97,19 @@ class Display {
     this.dir = 1;
     this.difficulty = 0.015;
     this.sound = sound;
+    this.sound.fX.ufo1.volume = 0.25;
+    this.sound.fX.ufo2.volume = 0.25;
+    this.sound.fX.kill.volume = 0.25;
+    this.sound.fX.shoot.volume = 0.25;
     this.score = 0;
     this.lvl = lvl;
+    this.drawPoints = false;
+    debugger
   }
 
   update() {
     this.frames++;
-    debugger
+
     document.addEventListener("keydown", (e) => {
       this.input.down[e.keyCode] = true;
     });
@@ -129,16 +136,27 @@ class Display {
         }
       }
 
+      if (this.frames % 600 === 0) {
+        if (!this.mysteryShip.active) {
+        this.deployMystery();
+        }
+      }
+
+      this.mysteryLeft();
+      this.mysteryRight();
+
       // prevent laserBase from leaving screen
       this.laserBase.x = Math.max(Math.min(this.laserBase.x,
         this.width - (this.laserBase.w * 3)), 0);
 
       if (this.invaderArr.length > 0) {
+
         // remove dead invaders
-        this.score = __WEBPACK_IMPORTED_MODULE_1__logic_js__["a" /* clearDead */](this.invaderArr, this.score);
+        this.score = __WEBPACK_IMPORTED_MODULE_1__logic_js__["a" /* clearDead */](this.invaderArr,
+                                     this.score, this.mysteryShip);
 
         //iterate through lasers and update postion
-        __WEBPACK_IMPORTED_MODULE_1__logic_js__["h" /* updateLasers */](this.width, this.laserArr);
+        __WEBPACK_IMPORTED_MODULE_1__logic_js__["h" /* updateLasers */](this.height, this.laserArr);
 
         // check to see if player shot exists
         if (!this.laserBase.canFire && this.laser.y > -12) {
@@ -151,7 +169,7 @@ class Display {
         if(!this.laserBase.canFire) {
           this.lvFrame = __WEBPACK_IMPORTED_MODULE_1__logic_js__["f" /* hitInvader */](this, this.invaderArr, this.sound,
                        this.laserBase, this.laser,
-                       this.lvFrame, this.difficulty);
+                       this.lvFrame, this.difficulty, this.mysteryShip);
         }
 
         // check to see if alien laser hit player
@@ -177,9 +195,9 @@ class Display {
         // move aliens, drop and switch directions at edge of canvas
         if (this.frames % this.lvFrame === 0) {
           this.spFrame = (this.spFrame + 1) % 2;
-          this.dir = __WEBPACK_IMPORTED_MODULE_1__logic_js__["g" /* updateInvaders */](this.width, this.lvFrame,
+          this.dir = __WEBPACK_IMPORTED_MODULE_1__logic_js__["g" /* updateInvaders */](this, this.width, this.lvFrame,
                                           this.spFrame, this.invaderArr,
-                                          this.dir, this.sound)
+                                          this.dir, this.sound, this.laserBase)
         }
       } else {
         this.nextLevel();
@@ -189,6 +207,26 @@ class Display {
 
   render() {
     this.ctx.clearRect(0, 0, this.width, this.height);
+
+    if (this.mysteryShip.hit) {
+      this.sound.fX.ufo2.play();
+      this.drawPoints = true;
+      setTimeout(() => {
+        this.drawPoints = false;
+      }, 1000)
+    } else if (this.mysteryShip.active) {
+      __WEBPACK_IMPORTED_MODULE_1__logic_js__["e" /* drawSprite */](this.ctx, this.mysteryShip);
+    }
+
+    if (this.drawPoints) {
+      this.ctx.font = "20px Invader";
+      this.ctx.fillStyle = "white";
+      this.ctx.fillText(
+        "" + this.mysteryShip.points,
+           this.mysteryShip.x + (this.mysteryShip.w / 2),
+           this.mysteryShip.y + (this.mysteryShip.h*2));
+    }
+
 
     for (let i = 0; i < this.invaderArr.length; i++) {
       let a = this.invaderArr[i];
@@ -282,6 +320,34 @@ class Display {
     this.lvFrame = 60;
     this.invaderArr = this.makeSprite.makeInvaders(this.lvl);
   }
+
+  deployMystery() {
+    this.mysteryShip.active = true;
+    this.mysteryShip.dir *= -1;
+  }
+
+  mysteryLeft() {
+    if (this.mysteryShip.active && this.mysteryShip.dir === 1) {
+      if ((this.mysteryShip.x + this.mysteryShip.w*3) > 0) {
+        this.mysteryShip.x -= 1.75;
+        this.sound.fX.ufo1.play();
+      } else {
+        this.mysteryShip.active = false;
+      }
+    }
+  }
+
+  mysteryRight() {
+    if (this.mysteryShip.active && this.mysteryShip.dir === -1) {
+      if ((this.mysteryShip.x - this.mysteryShip.w*3) < this.width) {
+        this.mysteryShip.x += 1.5;
+        // this.sound.fX.ufo1.play();
+        // if (this.frames % 120 === 0) this.sound.fX.ufo2.play();
+      } else {
+        this.mysteryShip.active = false;
+      }
+    }
+  }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Display);
@@ -310,6 +376,7 @@ class MakeSprite {
       [new Sprite(this.image, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][4].x, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][4].y, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][4].width, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][4].height),
        new Sprite(this.image, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][5].x, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][5].y, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][5].width, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][5].height),
        new Sprite(this.image, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][6].x, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][6].y, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][6].width, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][6].height)],
+      new Sprite(this.image, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][10].x, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][10].y, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][10].width, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][10].height)
     ];
     this.laserSprites = [
         new Sprite(this.image, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][7].x, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][7].y, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][7].width, __WEBPACK_IMPORTED_MODULE_0__spritePos_js__["a" /* spSh */][7].height),
@@ -320,14 +387,14 @@ class MakeSprite {
 
   makeInvaders(lvl=1) {
     let invaderArr = [];
-    let rows = [2, 1, 1, 0, 0];
+    let rows = [0];
   	for (let i = 0, len = rows.length; i < len; i++) {
-  		for (let j = 0; j < 10; j++) {
+  		for (let j = 0; j < 1; j++) {
   			let a = rows[i];
   			invaderArr.push({
   				sprite: this.invSprites[a],
   				x: 10 + j*45 + [0, 0, 5][a],
-  				y: 35*(lvl) + i*45,
+  				y: 70*(lvl) + i*45,
   				w: this.invSprites[a][0].w,
   				h: this.invSprites[a][0].h,
           alive: true,
@@ -354,6 +421,22 @@ class MakeSprite {
     }
 
     return laserBase;
+  }
+
+  makeMysteryShip() {
+    const mysteryShip = {
+      sprite: [this.invSprites[3]],
+      x: this.canvas.width,
+      y: (30 + this.invSprites[3].h),
+      w: this.invSprites[3].w,
+      h: this.invSprites[3].h,
+      active: false,
+      hit: false,
+      points: 300,
+      dir: -1
+    }
+
+    return mysteryShip;
   }
 }
 
@@ -452,10 +535,12 @@ class SoundFx {
       fast4: new Audio("sounds/fast4.wav"),
       die: new Audio("sounds/die.wav"),
       shoot: new Audio("sounds/shoot.wav"),
-      kill: new Audio("sounds/killinv.wav")
+      kill: new Audio("sounds/killinv.wav"),
+      ufo1: new Audio("sounds/ufo_low.wav"),
+      ufo2: new Audio("sounds/ufo_high.wav")
     }
 
-    this.muted = true;
+    this.muted = false;
   }
 
   mute() {
@@ -474,7 +559,6 @@ class SoundFx {
     this.muted = false;
   }
 }
-
 
 /* harmony default export */ __webpack_exports__["a"] = (SoundFx);
 
@@ -571,7 +655,7 @@ class Laser {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const drawSprite = (ctx, { sprite, x, y }, sp) => {
+const drawSprite = (ctx, { sprite, x, y }, sp=0) => {
   ctx.drawImage(sprite[sp].img,
     sprite[sp].x, sprite[sp].y, sprite[sp].w, sprite[sp].h,
     x, y, sprite[sp].w*3, sprite[sp].h*3);
@@ -589,10 +673,10 @@ const drawLasers = (ctx, arr) => {
 /* harmony export (immutable) */ __webpack_exports__["b"] = drawLasers;
 
 
-const updateLasers = (width, arr) => {
+const updateLasers = (height, arr) => {
   for (let i = 0; i < arr.length; i++) {
     let l = arr[i];
-    if (l.y > width) {
+    if (l.y > height) {
       arr.splice(i, 1);
       i--;
       continue;
@@ -604,23 +688,36 @@ const updateLasers = (width, arr) => {
 /* harmony export (immutable) */ __webpack_exports__["h"] = updateLasers;
 
 
-const updateInvaders = (width, lvFrame, spFrame, arr, dir, sound) => {
-  let left = 0, right = width;
-  for (let i = 0; i < arr.length; i++) {
+const updateInvaders = (obj, width, lvFrame, spFrame, arr, dir, sound, player) => {
+  let left = 0, right = width, len = arr.length;
+  for (let i = 0; i < len; i++) {
     let a = arr[i];
     a.x += 30 * dir;
     left = Math.max(left, a.x + a.w);
     right = Math.min(right, a.x);
   }
+
   if (left > width - 20 || right < 10) {
     dir *= -1;
-    for (let i = 0; i < arr.length; i++) {
+    for (let i = 0; i < len; i++) {
       let a = arr[i]
       a.x += 30 * dir;
       a.y += 30;
     }
   }
-  if (arr.length > 0) {
+
+  if (len > 0 && (arr[len-1].y + arr[len-1].h*3 >= player.y)) {
+    for (let i = 0; i < len; i++) {
+      let a = arr[i];
+      if (obj.collision(a, player)) {
+        sound.fX.die.play();
+        player.alive = false;
+        player.lives = 0;
+      }
+    }
+  }
+
+  if (len > 0) {
     if (spFrame === 0 && lvFrame < 20) {
       sound.fX.fast2.play();
     } else if (spFrame === 1 && lvFrame < 20) {
@@ -636,43 +733,45 @@ const updateInvaders = (width, lvFrame, spFrame, arr, dir, sound) => {
     }
   }
 
+
   return dir;
 }
 /* harmony export (immutable) */ __webpack_exports__["g"] = updateInvaders;
 
 
-const hitInvader = (obj, arr, sound, player, laser, lvFrame, difficulty) => {
+const hitInvader = (obj, arr, sound, player, laser, lvFrame, difficulty, mysty) => {
+  if (mysty.active && obj.collision(laser, mysty)) {
+    mysty.hit = true;
+  }
+
   let len = arr.length;
   for (let i = arr.length-1; i >= 0; i--) {
     let a = arr[i];
     if (obj.collision(laser, a)) {
-      // laser.destroy();
       a.alive = false;
       len--;
       sound.fX.kill.play();
       player.canFire = true;
-
-      switch (len) {
-        case 40:
-          lvFrame = 50;
-          break;
-        case 30:
-          lvFrame = 40;
-          break;
-        case 20:
-          difficulty = 0.03;
-          lvFrame = 30;
-          break;
-        case 10:
-          lvFrame = 25;
-          break;
-        case 1:
-          lvFrame = 6;
-          break;
-      }
-
-      break;
     }
+  }
+
+  switch (len) {
+    case 40:
+      lvFrame = 50;
+      break;
+    case 30:
+      lvFrame = 40;
+      break;
+    case 20:
+      difficulty = 0.03;
+      lvFrame = 30;
+      break;
+    case 10:
+      lvFrame = 25;
+      break;
+    case 1:
+      lvFrame = 6;
+      break;
   }
 
   return lvFrame;
@@ -680,7 +779,13 @@ const hitInvader = (obj, arr, sound, player, laser, lvFrame, difficulty) => {
 /* harmony export (immutable) */ __webpack_exports__["f"] = hitInvader;
 
 
-const clearDead = (arr, score, lvl) => {
+const clearDead = (arr, score, mysty) => {
+  if (mysty.hit) {
+    score += mysty.points;
+    mysty.active = false;
+    mysty.hit = false;
+  }
+
   for (let i = 0; i < arr.length; i++) {
     if (!arr[i].alive) {
       score += arr[i].points;
@@ -777,6 +882,12 @@ const spSh = [
     y: 15,
     width: 18,
     height: 11
+  },
+  {
+    x: 0,
+    y: 0,
+    width: 16,
+    height: 7
   }
 ];
 /* harmony export (immutable) */ __webpack_exports__["a"] = spSh;

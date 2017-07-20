@@ -13,6 +13,7 @@ class Display {
     this.height = this.canvas.height;
     this.makeSprite = new MakeSprite(this.canvas);
     this.invaderArr = this.makeSprite.makeInvaders(lvl);
+    this.mysteryShip = this.makeSprite.makeMysteryShip();
     this.laserArr = [];
     this.laserBase = this.makeSprite.makelaserBase();
     this.frames = 0;
@@ -22,13 +23,19 @@ class Display {
     this.dir = 1;
     this.difficulty = 0.015;
     this.sound = sound;
+    this.sound.fX.ufo1.volume = 0.25;
+    this.sound.fX.ufo2.volume = 0.25;
+    this.sound.fX.kill.volume = 0.25;
+    this.sound.fX.shoot.volume = 0.25;
     this.score = 0;
     this.lvl = lvl;
+    this.drawPoints = false;
+    debugger
   }
 
   update() {
     this.frames++;
-    debugger
+
     document.addEventListener("keydown", (e) => {
       this.input.down[e.keyCode] = true;
     });
@@ -55,16 +62,27 @@ class Display {
         }
       }
 
+      if (this.frames % 600 === 0) {
+        if (!this.mysteryShip.active) {
+        this.deployMystery();
+        }
+      }
+
+      this.mysteryLeft();
+      this.mysteryRight();
+
       // prevent laserBase from leaving screen
       this.laserBase.x = Math.max(Math.min(this.laserBase.x,
         this.width - (this.laserBase.w * 3)), 0);
 
       if (this.invaderArr.length > 0) {
+
         // remove dead invaders
-        this.score = Logic.clearDead(this.invaderArr, this.score);
+        this.score = Logic.clearDead(this.invaderArr,
+                                     this.score, this.mysteryShip);
 
         //iterate through lasers and update postion
-        Logic.updateLasers(this.width, this.laserArr);
+        Logic.updateLasers(this.height, this.laserArr);
 
         // check to see if player shot exists
         if (!this.laserBase.canFire && this.laser.y > -12) {
@@ -78,7 +96,7 @@ class Display {
           this.lvFrame = Logic.
             hitInvader(this, this.invaderArr, this.sound,
                        this.laserBase, this.laser,
-                       this.lvFrame, this.difficulty);
+                       this.lvFrame, this.difficulty, this.mysteryShip);
         }
 
         // check to see if alien laser hit player
@@ -104,9 +122,9 @@ class Display {
         // move aliens, drop and switch directions at edge of canvas
         if (this.frames % this.lvFrame === 0) {
           this.spFrame = (this.spFrame + 1) % 2;
-          this.dir = Logic.updateInvaders(this.width, this.lvFrame,
+          this.dir = Logic.updateInvaders(this, this.width, this.lvFrame,
                                           this.spFrame, this.invaderArr,
-                                          this.dir, this.sound)
+                                          this.dir, this.sound, this.laserBase)
         }
       } else {
         this.nextLevel();
@@ -116,6 +134,26 @@ class Display {
 
   render() {
     this.ctx.clearRect(0, 0, this.width, this.height);
+
+    if (this.mysteryShip.hit) {
+      this.sound.fX.ufo2.play();
+      this.drawPoints = true;
+      setTimeout(() => {
+        this.drawPoints = false;
+      }, 1000)
+    } else if (this.mysteryShip.active) {
+      Logic.drawSprite(this.ctx, this.mysteryShip);
+    }
+
+    if (this.drawPoints) {
+      this.ctx.font = "20px Invader";
+      this.ctx.fillStyle = "white";
+      this.ctx.fillText(
+        "" + this.mysteryShip.points,
+           this.mysteryShip.x + (this.mysteryShip.w / 2),
+           this.mysteryShip.y + (this.mysteryShip.h*2));
+    }
+
 
     for (let i = 0; i < this.invaderArr.length; i++) {
       let a = this.invaderArr[i];
@@ -208,6 +246,34 @@ class Display {
     this.dir = 1;
     this.lvFrame = 60;
     this.invaderArr = this.makeSprite.makeInvaders(this.lvl);
+  }
+
+  deployMystery() {
+    this.mysteryShip.active = true;
+    this.mysteryShip.dir *= -1;
+  }
+
+  mysteryLeft() {
+    if (this.mysteryShip.active && this.mysteryShip.dir === 1) {
+      if ((this.mysteryShip.x + this.mysteryShip.w*3) > 0) {
+        this.mysteryShip.x -= 1.75;
+        this.sound.fX.ufo1.play();
+      } else {
+        this.mysteryShip.active = false;
+      }
+    }
+  }
+
+  mysteryRight() {
+    if (this.mysteryShip.active && this.mysteryShip.dir === -1) {
+      if ((this.mysteryShip.x - this.mysteryShip.w*3) < this.width) {
+        this.mysteryShip.x += 1.5;
+        // this.sound.fX.ufo1.play();
+        // if (this.frames % 120 === 0) this.sound.fX.ufo2.play();
+      } else {
+        this.mysteryShip.active = false;
+      }
+    }
   }
 }
 

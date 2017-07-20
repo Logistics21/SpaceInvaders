@@ -15,6 +15,7 @@ class MakeSprite {
       [new Sprite(this.image, spSh[4].x, spSh[4].y, spSh[4].width, spSh[4].height),
        new Sprite(this.image, spSh[5].x, spSh[5].y, spSh[5].width, spSh[5].height),
        new Sprite(this.image, spSh[6].x, spSh[6].y, spSh[6].width, spSh[6].height)],
+      new Sprite(this.image, spSh[10].x, spSh[10].y, spSh[10].width, spSh[10].height)
     ];
     this.laserSprites = [
         new Sprite(this.image, spSh[7].x, spSh[7].y, spSh[7].width, spSh[7].height),
@@ -25,14 +26,14 @@ class MakeSprite {
 
   makeInvaders(lvl=1) {
     let invaderArr = [];
-    let rows = [2, 1, 1, 0, 0];
+    let rows = [0];
   	for (let i = 0, len = rows.length; i < len; i++) {
-  		for (let j = 0; j < 10; j++) {
+  		for (let j = 0; j < 1; j++) {
   			let a = rows[i];
   			invaderArr.push({
   				sprite: this.invSprites[a],
   				x: 10 + j*45 + [0, 0, 5][a],
-  				y: 35*(lvl) + i*45,
+  				y: 70*(lvl) + i*45,
   				w: this.invSprites[a][0].w,
   				h: this.invSprites[a][0].h,
           alive: true,
@@ -59,6 +60,22 @@ class MakeSprite {
     }
 
     return laserBase;
+  }
+
+  makeMysteryShip() {
+    const mysteryShip = {
+      sprite: [this.invSprites[3]],
+      x: this.canvas.width,
+      y: (30 + this.invSprites[3].h),
+      w: this.invSprites[3].w,
+      h: this.invSprites[3].h,
+      active: false,
+      hit: false,
+      points: 300,
+      dir: -1
+    }
+
+    return mysteryShip;
   }
 }
 
