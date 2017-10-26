@@ -88,3 +88,7 @@ canvas {
   padding: 1em;
   font-size: 20px;
 }
+
+#mute {
+  cursor: pointer;
+}
