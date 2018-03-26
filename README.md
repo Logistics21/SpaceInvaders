@@ -15,7 +15,7 @@ This version of Space Invaders will allow users to:
 - [ ] Move horizontally to dodge enemy fire and fire at opponents
 - [ ] See invaders move faster as their numbers dwindle
 - [ ] Feature actual sound effects and sprites from the original game
-- [ ] A lives system that increases and decreases with level completion and death
+- [ ] A live system that increases and decreases with level completion and death
 
 In addition, this project will include:
 
